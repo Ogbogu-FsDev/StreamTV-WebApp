@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giru TV</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="/static/script.js" defer></script> <!-- Link to external JS -->
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <ul>
+            <li><a href="/dashboard" class="active">Home</a></li>
+            <li><a href="/tv-guide">TV Guide</a></li>
+            <li><a href="/watchTV">Watch TV</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/logout" class="logout-btn">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Container Section -->
+    <div class="dashboard-container">
+        <div class="dashboard-item">
+            <h2>Trending Now</h2>
+            <p>Check out the most-watched shows today!</p>
+        </div>
+        <div class="dashboard-item">
+            <h2>Live TV</h2>
+            <p>Watch your favorite channels live, anytime.</p>
+        </div>
+        <div class="dashboard-item">
+            <h2>New Releases</h2>
+            <p>Fresh content just for you! See what's new.</p>
+        </div>
+        <div class="dashboard-item">
+            <h2>Top Movies</h2>
+            <p>Discover the most popular movies right now.</p>
+        </div>
+        <div class="dashboard-item">
+            <h2>A Great Deal for You!</h2>
+            <p>How does <i>£2.99</i> a month sound?</p>
+        </div>
+        <div class="dashboard-item">
+            <h2>Sports</h2>
+            <p>Watch live games and exclusive sports content.</p>
+        </div>
+        <div class="dashboard-item">
+            <h2>Kids Zone</h2>
+            <p>Fun and safe entertainment for children.</p>
+        </div>
+        <div class="dashboard-item">
+            <h2>Watch Later</h2>
+            <p>Save your favorite shows and movies for later.</p>
+        </div>
+        <div class="dashboard-item">
+            <h2>Settings</h2>
+            <p>Manage your account, preferences, and subscriptions.</p>
+        </div>
+    </div>
+
+
+    <!-- Add Stars Background Animation -->
+    <script src="{{ url_for('static', filename='stars.js') }}"></script>
+    
+
+</body>
+</html>

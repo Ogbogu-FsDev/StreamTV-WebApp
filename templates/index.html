@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register</title>
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/static/script.js" defer></script> <!-- Link to external JS -->
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <ul>
+            <li><a href="/" class="active">Home</a></li>
+        </ul>
+    </nav>
+<!-- <button id="registerLink">Register</button> --> 
+
+    <!-- Login Form -->
+    <div class="container">
+        <h1>Login to TV</h1>
+        <form action="/login" method="POST">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="login-username" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="Password">
+            </div>
+            <button type="submit" class="submit-btn" onclick="login()">Login</button>
+        </form>
+
+        <!-- Forgot Password Link -->
+        <div class="forgot-password">
+            <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+        </div>
+
+        <div class="register-link">
+            <p>Don't have an account? <a href="javascript:void(0);" id="registerLink">Register here</a></p>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Forgot Password</h2>
+            <p>Enter your email to recover your password:</p>
+            <input type="email" id="recoverEmail" name="recoverEmail" placeholder="Your Email">
+            <button type="button" onclick="submitRecovery()">Submit</button>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeRegisterModal">&times;</span>
+            <h2>Register a New Account</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="register-username" name="name" required placeholder="Enter your username" minlength="3" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="register-email" name="email" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" id="register-password" name="password" required placeholder="Enter your password">
+                    <div class="notification" id="passwordStrengthNotification"></div>
+                </div>
+                <button type="submit" class="submit-btn" onclick="register()">Register</button>
+            </form>            
+        </div>
+    </div>
+
+    <!-- Slideshow Container at the Bottom -->
+    <div class="slide-show-container">
+        <div class="slideshow">
+            <!-- Add your images here -->
+            <img src="{{ url_for('static', filename='/images/image1.jpg') }}" alt="Image 1">
+            <img src="{{ url_for('static', filename='/images/image2.jpg') }}" alt="Image 2">
+            <img src="{{ url_for('static', filename='/images/image3.jpg') }}" alt="Image 3">
+            <img src="{{ url_for('static', filename='/images/image4.jpg') }}" alt="Image 4">
+            <img src="{{ url_for('static', filename='/images/image5.jpg') }}" alt="Image 5">
+            <img src="{{ url_for('static', filename='/images/image6.jpg') }}" alt="Image 6">
+            <img src="{{ url_for('static', filename='/images/image7.jpg') }}" alt="Image 7">
+            <img src="{{ url_for('static', filename='/images/image8.jpg') }}" alt="Image 8">
+            <img src="{{ url_for('static', filename='/images/image9.jpg') }}" alt="Image 9">
+            <img src="{{ url_for('static', filename='/images/image10.jpg') }}" alt="Image 10">
+            <img src="{{ url_for('static', filename='/images/image11.jpg') }}" alt="Image 11">
+            <img src="{{ url_for('static', filename='/images/image12.jpg') }}" alt="Image 12">
+            <img src="{{ url_for('static', filename='/images/image13.jpg') }}" alt="Image 13">
+            <img src="{{ url_for('static', filename='/images/image14.jpg') }}" alt="Image 14">
+            <img src="{{ url_for('static', filename='/images/image15.jpg') }}" alt="Image 15">
+            <img src="{{ url_for('static', filename='/images/image16.jpg') }}" alt="Image 16">
+            <img src="{{ url_for('static', filename='/images/image17.jpg') }}" alt="Image 17">
+        </div>
+    </div>
+
+    <!-- Add Stars Background Animation -->
+    <script src="{{ url_for('static', filename='stars.js') }}"></script>
+
+</body>
+</html>
