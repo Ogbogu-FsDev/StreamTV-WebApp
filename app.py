@@ -1,100 +1,88 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for, jsonify, session, flash
 import sqlite3
-import hashlib
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key"  # Used for session management
-DATABASE = "/Giru-TV/data/GTVusers.db"
+app.secret_key = 'your_secret_key'
 
-# Function to connect to database
-def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
+def init_db():
+    with sqlite3.connect('D:/StreamTV-WebApp/User-Accounts.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS users (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            username TEXT UNIQUE NOT NULL,
+                            password TEXT NOT NULL,
+                            email TEXT UNIQUE NOT NULL)''')
+        conn.commit()
 
-# Route for the homepage
 @app.route('/')
-def index():
+def home():
     return render_template('index.html')
 
-# Route for the Contact page
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    if request.method == 'POST':
-        # Extract form data
-        email = request.form['email']
-        subject = request.form['subject']
-        message = request.form['message']
-
-        # You can add your email handling logic here (send the message, save it, etc.)
-
-        # Redirect to a thank you page or display a success message
-        return redirect(url_for('thank_you'))
-
-    return render_template('contact.html')
-
-# Route to render the login page
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form.get("email")  # Get email from form
-        password = request.form.get("password")  # Get password from form
-        hashed_password = hashlib.sha256(password.encode()).hexdigest()  # Hash input password
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE email = ? AND password = ?", (email, hashed_password))
-        user = cursor.fetchone()
-        conn.close()
-
-        if user:
-            session['user_id'] = user['id']
-            session['username'] = user['name']
-            return redirect(url_for('dashboard'))  # Redirect to dashboard on success
-        else:
-            return render_template('login.html', error="Invalid email or password")  # Show error message
-
-    return render_template('login.html')
-
-# Protected dashboard route (only logged-in users can access)
-@app.route('/dashboard')
-def dashboard():
-    if 'user_id' in session:
-        return f"Welcome, {session['username']}! <br><a href='/logout'>Logout</a>"
-    else:
-        return redirect(url_for('login'))
-
-# Logout route
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
-
-# Route to handle registration
 @app.route('/register', methods=['POST'])
 def register():
+    # Expecting data as JSON (including username, password, and email)
     data = request.get_json()
-    name = data.get("name")
-    email = data.get("email")
-    password = hashlib.sha256(data.get("password").encode()).hexdigest()  # Hash password
+    username = data['username']
+    password = data['password']
+    email = data['email']  # Get the email from the request data
+    
+    # Insert into database
+    with sqlite3.connect('D:/StreamTV-WebApp/User-Accounts.db') as conn:
+        cursor = conn.cursor()
+        try:
+            # Insert username, password, and email into the users table
+            cursor.execute("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", (username, email, password))
+            conn.commit()
+            return jsonify({'status': 'success'})
+        except sqlite3.IntegrityError:
+            return jsonify({'status': 'error', 'message': 'Username or email already taken'})
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
 
-    try:
-        cursor.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (name, email, password))
-        conn.commit()
-        response = {"success": True}
-    except sqlite3.IntegrityError:
-        response = {"success": False, "message": "Email already exists. Please try another one."}
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+    with sqlite3.connect('D:/StreamTV-WebApp/User-Accounts.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+        user = cursor.fetchone()
+        if user:
+            session['user'] = username
+            return jsonify({'status': 'success', 'redirect': url_for('dashboard')})
+        return jsonify({'status': 'error', 'message': 'Invalid credentials'})
 
-    conn.close()
-    return jsonify(response)
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
 
-# Route for the TV Guide page
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('home'))
+
+# TV Guide Route
 @app.route('/tv-guide')
 def tv_guide():
     return render_template('tv-guide.html')
 
+# Watch TV Route
+@app.route('/watchTV')
+def watch():
+    return render_template('watchTV.html')
+
+# Contact Page Route
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    if request.method == 'POST':
+        email = request.form['email']
+        subject = request.form['subject']
+        message = request.form['message']
+        flash("Message sent successfully!", "success")
+        return redirect(url_for('contact'))
+
+    return render_template('contact.html')
+
 if __name__ == '__main__':
+    init_db()
     app.run(debug=True)
