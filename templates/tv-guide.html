@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Guide - Giru TV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .container { max-width: 900px; margin: 20px auto; text-align: center; }
+        .tv-guide { display: grid; grid-template-columns: 150px auto; border: 1px solid #555; margin-top: 20px; }
+        .channel { background: #222; padding: 10px; font-weight: bold; border-bottom: 1px solid #444; }
+        .schedule { display: flex; overflow-x: auto; position: relative; background: #333; padding: 10px; }
+        .program { padding: 10px; border-right: 1px solid #555; min-width: 150px; cursor: pointer; position: relative; transition: background 0.3s; }
+        .program:hover { background: #444; }
+        .current-time { position: absolute; top: 0; left: 50%; width: 2px; height: 100%; background: red; z-index: 10; }
+        .program-info { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; padding: 20px; border-radius: 10px; z-index: 20; }
+        .program-info.active { display: block; }
+        .close-btn { background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <ul>
+            <li><a href="/dashboard">Home</a></li>
+            <li><a href="/tv-guide" class="active">TV Guide</a></li>
+            <li><a href="/watchTV">Watch TV</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/logout" class="logout-btn">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="guide-container">
+        <h1>Interactive TV Guide</h1>
+        <div class="tv-guide">
+            <div class="channel-list">
+                <div class="channel">Channel 1</div>
+                <div class="channel">Channel 2</div>
+                <div class="channel">Channel 3</div>
+            </div>
+            <div class="schedule">
+                <div class="current-time" id="currentTimeLine"></div>
+                <div id="scheduleGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Program Details Popup -->
+    <div id="programInfo" class="program-info">
+        <h2 id="programTitle">Program Title</h2>
+        <p id="programDescription">Description goes here...</p>
+        <button class="close-btn" onclick="closeProgramInfo()">Close</button>
+    </div>
+
+    <script>
+        const programs = {
+            "Channel 1": [
+                { time: "10:00 AM", title: "Morning News", description: "Start your day with the latest news." },
+                { time: "12:00 PM", title: "Cooking Show", description: "Learn delicious recipes from top chefs." },
+                { time: "3:00 PM", title: "Afternoon Movie", description: "A blockbuster movie to enjoy." }
+            ],
+            "Channel 2": [
+                { time: "11:00 AM", title: "Sports Highlights", description: "Catch up on the latest sports action." },
+                { time: "1:00 PM", title: "Documentary Hour", description: "Explore the wonders of the world." },
+                { time: "4:00 PM", title: "Talk Show", description: "Celebrities and hot topics." }
+            ],
+            "Channel 3": [
+                { time: "9:30 AM", title: "Cartoons", description: "Fun and educational shows for kids." },
+                { time: "1:30 PM", title: "Reality TV", description: "Exciting reality competitions." },
+                { time: "5:00 PM", title: "Evening News", description: "Stay informed with the latest updates." }
+            ]
+        };
+
+        function generateSchedule() {
+            const scheduleGrid = document.getElementById("scheduleGrid");
+            scheduleGrid.innerHTML = "";
+
+            Object.keys(programs).forEach(channel => {
+                programs[channel].forEach(program => {
+                    const programDiv = document.createElement("div");
+                    programDiv.classList.add("program");
+                    programDiv.innerHTML = `<strong>${program.time}</strong><br>${program.title}`;
+                    programDiv.onclick = () => showProgramInfo(program);
+                    scheduleGrid.appendChild(programDiv);
+                });
+            });
+        }
+
+        function showProgramInfo(program) {
+            document.getElementById("programTitle").innerText = program.title;
+            document.getElementById("programDescription").innerText = program.description;
+            document.getElementById("programInfo").classList.add("active");
+        }
+
+        function closeProgramInfo() {
+            document.getElementById("programInfo").classList.remove("active");
+        }
+
+        function updateCurrentTimeLine() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const totalMinutes = hours * 60 + minutes;
+
+            const gridWidth = document.querySelector(".schedule").offsetWidth;
+            const currentTimePosition = (totalMinutes / (24 * 60)) * gridWidth;
+
+            document.getElementById("currentTimeLine").style.left = `${currentTimePosition}px`;
+        }
+
+        // Initialize
+        generateSchedule();
+        updateCurrentTimeLine();
+        setInterval(updateCurrentTimeLine, 60000);
+    </script>
+
+    <!-- Add Stars Background Animation -->
+    <script src="{{ url_for('static', filename='stars.js') }}"></script>
+
+</body>
+</html>
