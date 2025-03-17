@@ -42,9 +42,3 @@ Before running the app, make sure you have the following installed:
 - Python 3.7+
 - pip (Python's package installer)
 - SQLite3 (Included with Python by default)
-
-### Steps to Run the Application
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/tv-streaming-webapp.git
